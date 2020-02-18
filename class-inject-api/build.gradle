@@ -1,0 +1,20 @@
+plugins {
+  id 'java'
+  id 'distribution'
+  id 'maven-publish'
+}
+
+group 'com.redconfig'
+version '1.0.0'
+
+sourceCompatibility = 1.8
+
+distributions {
+  main {
+
+  }
+}
+
+dependencies {
+  testImplementation group: 'junit', name: 'junit', version: '4.12'
+}

@@ -1,6 +1,7 @@
 package com.sampleconsumer;
 
 import com.redconfig.classinject.InjectClassOrigin;
+
 import dagger.Component;
 
 @InjectClassOrigin

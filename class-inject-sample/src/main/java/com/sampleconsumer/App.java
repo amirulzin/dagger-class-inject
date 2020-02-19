@@ -1,7 +1,6 @@
 package com.sampleconsumer;
 
 import com.redconfig.classinject.InjectClass;
-import com.redconfig.classinject.InjectClassOrigin;
 import com.sampleconsumer.nested.NestedClass;
 
 import javax.inject.Inject;

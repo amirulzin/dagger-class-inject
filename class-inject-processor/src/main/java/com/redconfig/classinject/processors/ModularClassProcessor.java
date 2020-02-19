@@ -1,16 +1,22 @@
 package com.redconfig.classinject.processors;
 
-import com.redconfig.classinject.*;
+import com.redconfig.classinject.ClassProcessor;
+import com.redconfig.classinject.Config;
+import com.redconfig.classinject.TargetClass;
+import com.redconfig.classinject.TargetModule;
+import com.redconfig.classinject.Util;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeSpec;
+
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.ProcessingEnvironment;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import javax.annotation.processing.Filer;
+import javax.annotation.processing.ProcessingEnvironment;
 
 public class ModularClassProcessor implements ClassProcessor {
   @Override

@@ -1,18 +1,24 @@
 package com.redconfig.classinject.processors;
 
-import com.redconfig.classinject.*;
+import com.redconfig.classinject.ClassProcessor;
+import com.redconfig.classinject.Config;
+import com.redconfig.classinject.InjectClass;
+import com.redconfig.classinject.TargetClass;
+import com.redconfig.classinject.TargetModule;
+import com.redconfig.classinject.Util;
 import com.squareup.javapoet.TypeSpec;
+
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.Messager;
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.lang.model.element.TypeElement;
-import javax.tools.Diagnostic;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Set;
+
+import javax.annotation.processing.Filer;
+import javax.annotation.processing.Messager;
+import javax.annotation.processing.ProcessingEnvironment;
+import javax.tools.Diagnostic;
 
 public class MonolithicClassProcessor implements ClassProcessor {
   @Override
@@ -36,9 +42,8 @@ public class MonolithicClassProcessor implements ClassProcessor {
         if (targetClass.isPublic) {
           module.targetClasses.add(targetClass);
         } else {
-          String errorMsg = String.format("%s class visibility must be public to be generated under @%s %s mode.", targetClass.qualifiedClassName, InjectClass.class.getSimpleName(), Config.OPTION_MODE_MONOLITH);
-          TypeElement typeElement = processingEnv.getElementUtils().getTypeElement(targetClass.qualifiedClassName);
-          messager.printMessage(Diagnostic.Kind.ERROR, errorMsg, typeElement);
+          String errorMsg = String.format("%s class visibility must be public to be generated under @%s %s mode.", targetClass.className.canonicalName(), InjectClass.class.getSimpleName(), Config.OPTION_MODE_MONOLITH);
+          messager.printMessage(Diagnostic.Kind.ERROR, errorMsg, targetClass.originatingTypeElement);
         }
       }
     }

@@ -1,37 +1,36 @@
 package com.redconfig.classinject;
 
+import com.squareup.javapoet.ClassName;
+
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Modifier;
-import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
-import java.util.Objects;
 
 public class TargetClass {
   public final boolean isPublic;
   public final String qualifiedPackageName;
-  public final String simplePackageName;
-  public final String qualifiedClassName;
-  public final String semiQualifiedClassName;
   public final String qualifiedProviderMethodName;
   public final String simpleProviderMethodName;
+  public final ClassName className;
+  public final TypeElement originatingTypeElement;
 
   public TargetClass(
     boolean isPublic,
     @NotNull String qualifiedPackageName,
-    @NotNull String simplePackageName,
-    @NotNull String qualifiedClassName,
-    @NotNull String semiQualifiedClassName,
     @NotNull String qualifiedProviderMethodName,
-    @NotNull String simpleProviderMethodName) {
+    @NotNull String simpleProviderMethodName,
+    @NotNull ClassName className,
+    @NotNull TypeElement originatingTypeElement) {
     this.isPublic = isPublic;
     this.qualifiedPackageName = qualifiedPackageName;
-    this.simplePackageName = simplePackageName;
-    this.qualifiedClassName = qualifiedClassName;
-    this.semiQualifiedClassName = semiQualifiedClassName;
     this.qualifiedProviderMethodName = qualifiedProviderMethodName;
     this.simpleProviderMethodName = simpleProviderMethodName;
+    this.className = className;
+    this.originatingTypeElement = originatingTypeElement;
   }
 
   @NotNull
@@ -39,25 +38,22 @@ public class TargetClass {
 
     boolean isPublic = typeElement.getModifiers().contains(Modifier.PUBLIC);
 
-    PackageElement packageElement = processingEnv.getElementUtils().getPackageOf(typeElement);
-    String simplePackageName = packageElement.getSimpleName().toString();
-    String qualifiedPackageName = packageElement.getQualifiedName().toString();
+    ClassName className = ClassName.get(typeElement);
+    String qualifiedPackageName = className.packageName();
 
-    String qualifiedClassName = typeElement.getQualifiedName().toString();
-    String semiQualifiedClassName = qualifiedClassName.replace(qualifiedPackageName + ".", ""); //remove package from qualified class name
+    String qualifiedClassName = className.canonicalName();
+    String semiQualifiedClassName = String.join(".", className.simpleNames());
 
-    String methodPrefix = "provides_";
-    String qualifiedProviderMethodName = methodPrefix + qualifiedClassName.replace(".", "_");  //replace any leftover . (i.e. inner classes);
-    String simpleProviderMethodName = methodPrefix + semiQualifiedClassName.replace(".", "_");  //replace any leftover . (i.e. inner classes);
+    String qualifiedProviderMethodName = Config.PROVIDER_METHOD_PREFIX + qualifiedClassName.replace(".", "_");
+    String simpleProviderMethodName = Config.PROVIDER_METHOD_PREFIX + semiQualifiedClassName.replace(".", "_");  //replace any leftover . (i.e. inner classes);
+
     return new TargetClass(
       isPublic,
       qualifiedPackageName,
-      simplePackageName,
-      qualifiedClassName,
-      semiQualifiedClassName,
       qualifiedProviderMethodName,
-      simpleProviderMethodName
-    );
+      simpleProviderMethodName,
+      className,
+      typeElement);
   }
 
   @Override
@@ -67,15 +63,14 @@ public class TargetClass {
     TargetClass that = (TargetClass) o;
     return isPublic == that.isPublic &&
       qualifiedPackageName.equals(that.qualifiedPackageName) &&
-      simplePackageName.equals(that.simplePackageName) &&
-      qualifiedClassName.equals(that.qualifiedClassName) &&
-      semiQualifiedClassName.equals(that.semiQualifiedClassName) &&
       qualifiedProviderMethodName.equals(that.qualifiedProviderMethodName) &&
-      simpleProviderMethodName.equals(that.simpleProviderMethodName);
+      simpleProviderMethodName.equals(that.simpleProviderMethodName) &&
+      className.equals(that.className) &&
+      originatingTypeElement.equals(that.originatingTypeElement);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(isPublic, qualifiedPackageName, simplePackageName, qualifiedClassName, semiQualifiedClassName, qualifiedProviderMethodName, simpleProviderMethodName);
+    return Objects.hash(isPublic, qualifiedPackageName, qualifiedProviderMethodName, simpleProviderMethodName, className, originatingTypeElement);
   }
 }

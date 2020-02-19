@@ -34,7 +34,7 @@ public class TargetModule {
 
     // A Map of method name to its MethodSpec.
     // We can determine if either qualified or simple method name is needed (default to simple).
-    // In monolithic mode, this is is vital.
+    // In monolithic mode, this is is vital to avoid method name collisions.
     HashMap<String, MethodSpec> providerMethods = new HashMap<>(targetClasses.size());
     for (TargetClass targetClass : targetClasses) {
       MethodSpec methodSpec = Util.writeDaggerClassProviderMethod(targetClass, providerMethods.containsKey(targetClass.simpleProviderMethodName));

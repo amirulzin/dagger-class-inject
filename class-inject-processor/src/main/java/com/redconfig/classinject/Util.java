@@ -1,16 +1,25 @@
 package com.redconfig.classinject;
 
-import com.squareup.javapoet.*;
-import dagger.Module;
-import dagger.Provides;
+import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeSpec;
+
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.processing.Filer;
-import javax.lang.model.element.Modifier;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+
+import javax.annotation.processing.Filer;
+import javax.lang.model.element.Modifier;
+
+import dagger.Module;
+import dagger.Provides;
 
 public class Util {
 
@@ -41,18 +50,15 @@ public class Util {
 
   @NotNull
   public static MethodSpec writeDaggerClassProviderMethod(@NotNull TargetClass targetClass, boolean qualified) {
-    ClassName className = qualified ? ClassName.bestGuess(targetClass.qualifiedClassName)
-      : ClassName.get(targetClass.qualifiedPackageName, targetClass.semiQualifiedClassName);
-
     String methodName = qualified ? targetClass.qualifiedProviderMethodName : targetClass.simpleProviderMethodName;
     return MethodSpec.methodBuilder(methodName)
       .addAnnotation(Provides.class)
       .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-      .returns(ParameterizedTypeName.get(ClassName.get(Class.class), className))
+      .returns(ParameterizedTypeName.get(ClassName.get(Class.class), targetClass.className))
       .addCode(
         CodeBlock.builder()
           .addStatement(CodeBlock.builder()
-            .add("return $T.class", className)
+            .add("return $T.class", targetClass.className)
             .build())
           .build())
       .build();

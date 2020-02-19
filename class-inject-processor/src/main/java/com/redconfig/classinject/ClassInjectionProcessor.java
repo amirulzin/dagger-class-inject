@@ -3,42 +3,28 @@ package com.redconfig.classinject;
 import com.google.auto.service.AutoService;
 import com.redconfig.classinject.processors.ModularClassProcessor;
 import com.redconfig.classinject.processors.MonolithicClassProcessor;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.processing.*;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Messager;
+import javax.annotation.processing.Processor;
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /*
- * Rule
- *
- * Maybe we should add the ClassInject at the class declaration?
- * Name choices:
- * AutoProvider
- * AutoClass
- * AutoClassifier
- * AutoClassFactory
- * AutoClassFactoryOrigin
- * AutoProxy
- * ProvidesClass
- * ClassFactory - good? seems misleading at times since its not a factory for other class. Imagine putting this in SomeObjectFactory...
- * AutoClassProvision
- * AutoProvisioned
- * ClassProvisioned
- * InjectClass
- *
- * Plans:
- * Modular mode = module per package. reverse graphed into a module tree (Done)
- * Monolith mode = class must be public. bound onto a root module. significantly lesser generated classes.
- *
- * Modular mode
+ * Modular mode = 1 Module per package. Reverse graphed into a module tree
+ * Monolith mode = Public classes only. Bound onto a root module. This significantly generate less classes.
  */
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 @AutoService(Processor.class)
@@ -92,7 +78,6 @@ public class ClassInjectionProcessor extends AbstractProcessor {
       }
     }
 
-
     ClassProcessor processor = getProcessorForMode(processingEnv.getOptions().get(Config.OPTION_MODE));
     processor.writeOutput(processingEnv, targetClasses, targetOriginClasses);
     return true;
@@ -100,9 +85,7 @@ public class ClassInjectionProcessor extends AbstractProcessor {
 
   @NotNull
   private ClassProcessor getProcessorForMode(@Nullable String modeValue) {
-    //We can use multi binding via Dagger but.. there're just 2 mode anyway and barely any constructor dependencies
-
-    if (Config.OPTION_MODE_MONOLITH.equals(modeValue)) {
+    if (modeValue != null && Config.OPTION_MODE_MONOLITH.contentEquals(modeValue)) {
       return new MonolithicClassProcessor();
     } else {
       return new ModularClassProcessor();

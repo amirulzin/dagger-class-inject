@@ -1,6 +1,6 @@
 package com.sampleconsumer;
 
-import com.redconfig.classinject.InjectClass;
+import com.redconfig.classinject.ClassInject;
 import com.sampleconsumer.nested.NestedClass;
 
 import javax.inject.Inject;
@@ -17,7 +17,7 @@ public class App {
     tool.doThings();
   }
 
-  @InjectClass
+  @ClassInject
   public interface SampleTarget {
 
   }

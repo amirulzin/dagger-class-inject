@@ -1,8 +1,8 @@
 package com.redconfig.classinject.processors;
 
+import com.redconfig.classinject.ClassInject;
 import com.redconfig.classinject.ClassProcessor;
 import com.redconfig.classinject.Config;
-import com.redconfig.classinject.InjectClass;
 import com.redconfig.classinject.TargetClass;
 import com.redconfig.classinject.TargetModule;
 import com.redconfig.classinject.Util;
@@ -42,7 +42,7 @@ public class MonolithicClassProcessor implements ClassProcessor {
         if (targetClass.isPublic) {
           module.targetClasses.add(targetClass);
         } else {
-          String errorMsg = String.format("%s class visibility must be public to be generated under @%s %s mode.", targetClass.className.canonicalName(), InjectClass.class.getSimpleName(), Config.OPTION_MODE_MONOLITH);
+          String errorMsg = String.format("%s class visibility must be public to be generated under @%s %s mode.", targetClass.className.canonicalName(), ClassInject.class.getSimpleName(), Config.OPTION_MODE_MONOLITH);
           messager.printMessage(Diagnostic.Kind.ERROR, errorMsg, targetClass.originatingTypeElement);
         }
       }

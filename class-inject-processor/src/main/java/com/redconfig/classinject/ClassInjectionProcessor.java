@@ -40,8 +40,8 @@ public class ClassInjectionProcessor extends AbstractProcessor {
   @Override
   public Set<String> getSupportedAnnotationTypes() {
     Set<String> set = new LinkedHashSet<>();
-    set.add(InjectClass.class.getCanonicalName());
-    set.add(InjectClassOrigin.class.getCanonicalName());
+    set.add(ClassInject.class.getCanonicalName());
+    set.add(ClassInjectOrigin.class.getCanonicalName());
     return set;
   }
 
@@ -55,7 +55,7 @@ public class ClassInjectionProcessor extends AbstractProcessor {
     for (TypeElement annotation : annotations) {
       Name annotationQualifiedName = annotation.getQualifiedName();
 
-      if (annotationQualifiedName.contentEquals(InjectClass.class.getCanonicalName())) {
+      if (annotationQualifiedName.contentEquals(ClassInject.class.getCanonicalName())) {
         Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(annotation);
         for (Element element : elements) {
           if (element instanceof TypeElement) {
@@ -67,7 +67,7 @@ public class ClassInjectionProcessor extends AbstractProcessor {
             targetClasses.add(TargetClass.from(typeElement, processingEnv));
           }
         }
-      } else if (annotationQualifiedName.contentEquals(InjectClassOrigin.class.getCanonicalName())) {
+      } else if (annotationQualifiedName.contentEquals(ClassInjectOrigin.class.getCanonicalName())) {
         Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(annotation);
         for (Element element : elements) {
           if (element instanceof TypeElement) {

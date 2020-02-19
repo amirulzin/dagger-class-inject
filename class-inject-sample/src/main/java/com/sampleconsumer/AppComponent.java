@@ -1,10 +1,10 @@
 package com.sampleconsumer;
 
-import com.redconfig.classinject.InjectClassOrigin;
+import com.redconfig.classinject.ClassInjectOrigin;
 
 import dagger.Component;
 
-@InjectClassOrigin
+@ClassInjectOrigin
 @Component(modules = ClassProvidersModule.class)
 public interface AppComponent {
   App providesApp();

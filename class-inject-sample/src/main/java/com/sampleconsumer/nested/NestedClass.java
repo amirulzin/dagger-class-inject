@@ -1,11 +1,11 @@
 package com.sampleconsumer.nested;
 
 
-import com.redconfig.classinject.InjectClass;
+import com.redconfig.classinject.ClassInject;
 
-@InjectClass
+@ClassInject
 public class NestedClass {
-  @InjectClass
+  @ClassInject
   public interface SampleTarget {
 
   }

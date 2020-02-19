@@ -1,17 +1,13 @@
 plugins {
   id 'java'
   id 'maven-publish'
-  id 'distribution'
 }
 
-group 'com.redconfig'
-version '0.1.0'
+group libraryGroupId
+version libraryGroupVersion
 
 sourceCompatibility = 1.8
 
-distributions {
-  main {}
-}
 dependencies {
   testImplementation group: 'junit', name: 'junit', version: '4.12'
 

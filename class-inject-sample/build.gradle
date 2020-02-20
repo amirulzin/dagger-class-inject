@@ -6,8 +6,10 @@ sourceCompatibility = 1.8
 
 repositories {
   mavenCentral()
+  jcenter()
 }
 
+// Optional. Only if you want to use monolith mode.
 compileJava {
   options.compilerArgs += '-Acom.redconfig.classinject.mode=monolith'
 }
@@ -19,6 +21,6 @@ dependencies {
   implementation "com.google.dagger:dagger:$DAGGER_VERSION"
   annotationProcessor "com.google.dagger:dagger-compiler:$DAGGER_VERSION"
 
-  implementation project(':class-inject-api')
-  annotationProcessor project(':class-inject-processor')
+  implementation "com.redconfig:class-inject-api:0.1.0"
+  annotationProcessor "com.redconfig:class-inject-processor:0.1.0"
 }

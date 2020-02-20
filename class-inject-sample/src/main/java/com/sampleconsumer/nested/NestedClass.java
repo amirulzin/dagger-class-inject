@@ -9,5 +9,4 @@ public class NestedClass {
   public interface SampleTarget {
 
   }
-
 }

@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/JCenter-0.1.0-brightgreen)
+![Version](https://img.shields.io/badge/JCenter-0.2.0-brightgreen)
 ![License](https://img.shields.io/badge/License-Apache%202.0-blue)
 
 # Dagger Class Inject 
@@ -37,8 +37,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.redconfig:class-inject-api:0.1.0'
-    annotationProcessor 'com.redconfig:class-inject-processor:0.1.0'
+    implementation 'com.redconfig:class-inject-api:0.2.0'
+    annotationProcessor 'com.redconfig:class-inject-processor:0.2.0'
 }
 ````
  

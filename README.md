@@ -33,7 +33,7 @@ Root modules are created in the package where `@ClassInjectOrigin` was annotated
 Gradle:
 ````groovy
 repositories {
-   jCenter()
+   jcenter()
 }
 
 dependencies {
@@ -80,6 +80,33 @@ public class SomeGenericTool {
     }       
 }
  ````
+### Advanced Configuration
+By default, the processor works in `modular` mode which produces `GeneratedClassProviderModule` in the
+packages where `@ClassInject` is found. This is necessary to support classes with package local visibility.
+In certain projects, this may generate a lot of modules and may not be the behavior that you want.
+
+Hence, if you are able to have every `@ClassInject` classes visibility as `public`, the library also provides 
+a `monolith` mode. This mode massively cuts down the size of generated modules and it simply provision the class 
+directly in the root modules instead.
+
+You can enable `monolith` mode by passing the argument below to the compiler arguments:
+````
+com.redconfig.classinject.mode=monolith
+````
+ 
+e.g. for Gradle :
+````groovy
+compileJava {
+    options.compilerArgs += '-Acom.redconfig.classinject.mode=monolith'
+}
+```` 
+
+### Known Issues
+
+The library was made with Dagger `2.26`. It is however possible to encounter a compilation error on versions below `2.26` 
+due to Dagger missing some annotations. If you encounter such issue, please upgrade to the latest 
+Dagger library (or anything above 2.26+). 
 
 ## License
-This library is provided under Apache 2.0
+
+This library is provided under [Apache 2.0](LICENSE.md)

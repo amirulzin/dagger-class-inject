@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/JCenter-0.2.0-brightgreen)
+![Version](https://img.shields.io/badge/JCenter-0.3.0-brightgreen)
 ![License](https://img.shields.io/badge/License-Apache%202.0-blue)
 
 # Dagger Class Inject 
@@ -39,8 +39,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.redconfig:class-inject-api:0.2.0'
-    annotationProcessor 'com.redconfig:class-inject-processor:0.2.0'
+    implementation 'com.redconfig:class-inject-api:0.3.0'
+    annotationProcessor 'com.redconfig:class-inject-processor:0.3.0'
     
     //You also need Dagger 2.26 at least
 }
@@ -92,7 +92,7 @@ packages where `@ClassInject` is found. This is necessary to support classes wit
 In certain projects, this may generate a lot of modules and may not be the behavior you want.
 
 To alleviate this, the library also provides a `monolith` mode. This mode massively cuts down the size 
-of generated modules and it simply provision the class directly in the root modules instead.  Note that 
+of generated modules and it simply provisions the class directly in the root modules instead. Note that 
 this mode only works if all of your `@ClassInject` classes visibility are `public`.
 
 You can enable `monolith` mode by passing the argument below to the compiler arguments:
@@ -107,11 +107,33 @@ compileJava {
 }
 ```` 
 
+### Hilt Support
+
+As of `0.3.0`, [Dagger Hilt](https://dagger.dev/hilt/) is supported via compiler arguments:
+
+````groovy
+compileJava {
+    options.compilerArgs += '-Acom.redconfig.classinject.module_annotations=hilt'
+}
+````
+
+````java
+@ClassInjectOrigin
+@HiltAndroidApp
+public class MyApplication extends Application { 
+   ...
+}
+````
+
+
+The generated modules are installed in [SingletonComponent](https://dagger.dev/hilt/components).
+Hilt itself is not included in this library, hence you need to declare them separately.
+ 
 ### Known Issues
 
-The library was made with Dagger `2.26`. It is however possible to encounter a compilation error on versions below `2.26` 
+The library was made with Dagger `2.29.1`. It is however possible to encounter a compilation error on versions below `2.26` 
 due to Dagger missing some annotations. If you encounter such issue, please upgrade to the latest 
-Dagger library (to anything above 2.26+). 
+Dagger library. 
 
 ## License
 

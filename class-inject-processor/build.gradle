@@ -11,15 +11,15 @@ sourceCompatibility = 1.8
 dependencies {
   testImplementation group: 'junit', name: 'junit', version: '4.12'
 
-  def AUTO_SERVICE = "com.google.auto.service:auto-service:1.0-rc6"
+  def AUTO_SERVICE = "com.google.auto.service:auto-service:1.0-rc7"
   compileOnly AUTO_SERVICE
   annotationProcessor AUTO_SERVICE
 
-  implementation 'com.squareup:javapoet:1.12.1'
+  implementation 'com.squareup:javapoet:1.13.0'
   implementation project(':class-inject-api')
   implementation 'javax.inject:javax.inject:1'
-  implementation "com.google.dagger:dagger:2.26"
-  compileOnly 'org.jetbrains:annotations:19.0.0'
+  implementation "com.google.dagger:dagger:2.29.1"
+  compileOnly 'org.jetbrains:annotations:20.1.0'
 }
 
 apply from: "../publications.gradle"

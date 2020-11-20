@@ -17,10 +17,10 @@ compileJava {
 dependencies {
   testImplementation group: 'junit', name: 'junit', version: '4.12'
 
-  def DAGGER_VERSION = "2.26"
+  def DAGGER_VERSION = "2.29.1"
   implementation "com.google.dagger:dagger:$DAGGER_VERSION"
   annotationProcessor "com.google.dagger:dagger-compiler:$DAGGER_VERSION"
 
-  implementation "com.redconfig:class-inject-api:0.1.0"
-  annotationProcessor "com.redconfig:class-inject-processor:0.1.0"
+  implementation "com.redconfig:class-inject-api:0.3.0"
+  annotationProcessor "com.redconfig:class-inject-processor:0.3.0"
 }

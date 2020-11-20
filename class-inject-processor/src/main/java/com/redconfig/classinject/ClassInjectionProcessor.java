@@ -3,24 +3,20 @@ package com.redconfig.classinject;
 import com.google.auto.service.AutoService;
 import com.redconfig.classinject.processors.ModularClassProcessor;
 import com.redconfig.classinject.processors.MonolithicClassProcessor;
-
+import com.squareup.javapoet.AnnotationSpec;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Messager;
-import javax.annotation.processing.Processor;
-import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedSourceVersion;
+import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 /*
  * Modular mode = 1 Module per package. Reverse graphed into a module tree
@@ -33,7 +29,7 @@ public class ClassInjectionProcessor extends AbstractProcessor {
   @Override
   public Set<String> getSupportedOptions() {
     Set<String> set = new LinkedHashSet<>();
-    set.add(Config.OPTION_MODE);
+    set.add(Config.KEY_OPTION_MODE);
     return set;
   }
 
@@ -78,18 +74,46 @@ public class ClassInjectionProcessor extends AbstractProcessor {
       }
     }
 
-    ClassProcessor processor = getProcessorForMode(processingEnv.getOptions().get(Config.OPTION_MODE));
-    processor.writeOutput(processingEnv, targetClasses, targetOriginClasses);
+    Map<String, String> envOptions = processingEnv.getOptions();
+
+    ClassProcessor processor = getProcessorForMode(envOptions);
+
+    Set<AnnotationSpec> additionalModuleAnnotations = loadAdditionalModuleAnnotations(envOptions);
+
+    processor.writeOutput(processingEnv, targetClasses, targetOriginClasses, additionalModuleAnnotations);
     return true;
   }
 
   @NotNull
-  private ClassProcessor getProcessorForMode(@Nullable String modeValue) {
+  private ClassProcessor getProcessorForMode(@NotNull Map<String, String> envOptions) {
+    String modeValue = envOptions.get(Config.KEY_OPTION_MODE);
     if (modeValue != null && Config.OPTION_MODE_MONOLITH.contentEquals(modeValue)) {
       return new MonolithicClassProcessor();
     } else {
       return new ModularClassProcessor();
     }
+  }
+
+  @NotNull
+  private Set<AnnotationSpec> loadAdditionalModuleAnnotations(@NotNull Map<String, String> envOptions) {
+    String annotationPairString = envOptions.get(Config.KEY_OPTION_MODULE_ANNOTATIONS);
+
+    Set<AnnotationSpec> out = new HashSet<>(10, 1f);
+    if (annotationPairString != null) {
+
+      String[] keys = annotationPairString.split(",");
+      AdditionalModuleAnnotations annotations = new AdditionalModuleAnnotations();
+      Map<String, AnnotationSpec> supportedSpecs = annotations.loadSupported();
+
+      for (String key : keys) {
+        AnnotationSpec spec = supportedSpecs.get(key);
+        if (spec != null) {
+          out.add(spec);
+        }
+      }
+
+    }
+    return out;
   }
 
 }

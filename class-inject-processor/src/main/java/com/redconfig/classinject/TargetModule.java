@@ -4,17 +4,14 @@ import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
-
+import dagger.Module;
 import org.jetbrains.annotations.NotNull;
 
+import javax.lang.model.element.Modifier;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
-
-import javax.lang.model.element.Modifier;
-
-import dagger.Module;
 
 public class TargetModule {
   public final String packageName;
@@ -26,11 +23,15 @@ public class TargetModule {
   }
 
   @NotNull
-  public TypeSpec toClassProvidersTypeSpec(@NotNull String moduleClassName) {
+  public TypeSpec toClassProvidersTypeSpec(@NotNull String moduleClassName, @NotNull Set<AnnotationSpec> additionalModuleAnnotations) {
     ClassName className = ClassName.get(packageName, moduleClassName);
     TypeSpec.Builder moduleBuilder = TypeSpec.interfaceBuilder(className)
       .addAnnotation(Module.class)
       .addModifiers(Modifier.PUBLIC);
+
+    for (AnnotationSpec annotationSpec : additionalModuleAnnotations) {
+      moduleBuilder.addAnnotation(annotationSpec);
+    }
 
     // A Map of method name to its MethodSpec.
     // We can determine if either qualified or simple method name is needed (default to simple).

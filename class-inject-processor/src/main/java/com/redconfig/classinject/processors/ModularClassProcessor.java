@@ -1,33 +1,28 @@
 package com.redconfig.classinject.processors;
 
-import com.redconfig.classinject.ClassProcessor;
-import com.redconfig.classinject.Config;
-import com.redconfig.classinject.TargetClass;
-import com.redconfig.classinject.TargetModule;
-import com.redconfig.classinject.Util;
+import com.redconfig.classinject.*;
+import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.TypeSpec;
-
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.processing.Filer;
+import javax.annotation.processing.ProcessingEnvironment;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.ProcessingEnvironment;
-
 public class ModularClassProcessor implements ClassProcessor {
   @Override
-  public void writeOutput(@NotNull ProcessingEnvironment processingEnv, @NotNull Set<TargetClass> targetClasses, @NotNull Set<TargetClass> targetOriginClasses) {
+  public void writeOutput(@NotNull ProcessingEnvironment processingEnv, @NotNull Set<TargetClass> targetClasses, @NotNull Set<TargetClass> targetOriginClasses, @NotNull Set<AnnotationSpec> additionalModuleAnnotations) {
     Filer filer = processingEnv.getFiler();
-    Set<ClassName> providerModules = writeProviderModules(targetClasses, filer);
+    Set<ClassName> providerModules = writeProviderModules(targetClasses, additionalModuleAnnotations, filer);
     writeOriginModules(targetOriginClasses, providerModules, filer);
   }
 
   @NotNull
-  private Set<ClassName> writeProviderModules(@NotNull Set<TargetClass> targetClasses, @NotNull Filer filer) {
+  private Set<ClassName> writeProviderModules(@NotNull Set<TargetClass> targetClasses, @NotNull Set<AnnotationSpec> additionalModuleAnnotations, @NotNull Filer filer) {
     HashMap<String, TargetModule> modules = new LinkedHashMap<>(targetClasses.size(), 1f);
 
     for (TargetClass targetClass : targetClasses) {
@@ -37,7 +32,7 @@ public class ModularClassProcessor implements ClassProcessor {
     Set<ClassName> out = new LinkedHashSet<>();
     for (TargetModule targetModule : modules.values()) {
       String moduleClassName = Config.MODULE_NAME;
-      TypeSpec generatedClassProviderModule = targetModule.toClassProvidersTypeSpec(moduleClassName);
+      TypeSpec generatedClassProviderModule = targetModule.toClassProvidersTypeSpec(moduleClassName, additionalModuleAnnotations);
       out.add(ClassName.get(targetModule.packageName, moduleClassName));
       Util.writeClass(targetModule.packageName, generatedClassProviderModule, filer);
     }

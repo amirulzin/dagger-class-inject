@@ -1,32 +1,26 @@
 package com.redconfig.classinject.processors;
 
-import com.redconfig.classinject.ClassInject;
-import com.redconfig.classinject.ClassProcessor;
-import com.redconfig.classinject.Config;
-import com.redconfig.classinject.TargetClass;
-import com.redconfig.classinject.TargetModule;
-import com.redconfig.classinject.Util;
+import com.redconfig.classinject.*;
+import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.TypeSpec;
-
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Set;
 
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.tools.Diagnostic;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Set;
 
 public class MonolithicClassProcessor implements ClassProcessor {
   @Override
-  public void writeOutput(@NotNull ProcessingEnvironment processingEnv, @NotNull Set<TargetClass> targetClasses, @NotNull Set<TargetClass> targetOriginClasses) {
-    writeProviderModules(processingEnv, targetOriginClasses, targetClasses);
+  public void writeOutput(@NotNull ProcessingEnvironment processingEnv, @NotNull Set<TargetClass> targetClasses, @NotNull Set<TargetClass> targetOriginClasses, @NotNull Set<AnnotationSpec> additionalModuleAnnotations) {
+    writeProviderModules(processingEnv, targetOriginClasses, targetClasses, additionalModuleAnnotations);
   }
 
-  private void writeProviderModules(@NotNull ProcessingEnvironment processingEnv, @NotNull Set<TargetClass> targetOriginClasses, @NotNull Set<TargetClass> targetClasses) {
+  private void writeProviderModules(@NotNull ProcessingEnvironment processingEnv, @NotNull Set<TargetClass> targetOriginClasses, @NotNull Set<TargetClass> targetClasses, @NotNull Set<AnnotationSpec> additionalModuleAnnotations) {
     Filer filer = processingEnv.getFiler();
     Messager messager = processingEnv.getMessager();
     //Create originModules first
@@ -50,7 +44,7 @@ public class MonolithicClassProcessor implements ClassProcessor {
 
     //Generate the classes
     for (TargetModule targetModule : targetModules) {
-      TypeSpec typeSpec = targetModule.toClassProvidersTypeSpec(Config.ROOT_MODULE_NAME);
+      TypeSpec typeSpec = targetModule.toClassProvidersTypeSpec(Config.ROOT_MODULE_NAME, additionalModuleAnnotations);
       Util.writeClass(targetModule.packageName, typeSpec, filer);
     }
   }

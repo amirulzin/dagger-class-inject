@@ -10,5 +10,5 @@ allprojects {
 
 ext {
   libraryGroupId = 'com.redconfig'
-  libraryGroupVersion = '0.3.0'
+  libraryGroupVersion = '0.3.1'
 }

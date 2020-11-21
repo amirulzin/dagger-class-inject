@@ -18,7 +18,7 @@ public class ModularClassProcessor implements ClassProcessor {
   public void writeOutput(@NotNull ProcessingEnvironment processingEnv, @NotNull Set<TargetClass> targetClasses, @NotNull Set<TargetClass> targetOriginClasses, @NotNull Set<AnnotationSpec> additionalModuleAnnotations) {
     Filer filer = processingEnv.getFiler();
     Set<ClassName> providerModules = writeProviderModules(targetClasses, additionalModuleAnnotations, filer);
-    writeOriginModules(targetOriginClasses, providerModules, filer);
+    writeOriginModules(targetOriginClasses, providerModules, additionalModuleAnnotations, filer);
   }
 
   @NotNull
@@ -41,14 +41,14 @@ public class ModularClassProcessor implements ClassProcessor {
   }
 
 
-  private void writeOriginModules(@NotNull Set<TargetClass> targetOriginClasses, @NotNull Set<ClassName> providerModules, @NotNull Filer filer) {
+  private void writeOriginModules(@NotNull Set<TargetClass> targetOriginClasses, @NotNull Set<ClassName> providerModules, @NotNull Set<AnnotationSpec> additionalModuleAnnotations, @NotNull Filer filer) {
     HashMap<String, TargetModule> originModules = new HashMap<>(targetOriginClasses.size(), 1f);
     for (TargetClass originClass : targetOriginClasses) {
       Util.addClassToModule(originModules, originClass);
     }
 
     for (TargetModule targetModule : originModules.values()) {
-      TypeSpec typeSpec = targetModule.toOriginClassProvidersTypeSpec(Config.ROOT_MODULE_NAME, providerModules);
+      TypeSpec typeSpec = targetModule.toOriginClassProvidersTypeSpec(Config.ROOT_MODULE_NAME, providerModules, additionalModuleAnnotations);
       Util.writeClass(targetModule.packageName, typeSpec, filer);
     }
   }

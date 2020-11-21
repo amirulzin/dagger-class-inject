@@ -48,13 +48,18 @@ public class TargetModule {
   }
 
   @NotNull
-  public TypeSpec toOriginClassProvidersTypeSpec(@NotNull String moduleClassName, @NotNull Set<ClassName> targetModulesClassNames) {
+  public TypeSpec toOriginClassProvidersTypeSpec(@NotNull String moduleClassName, @NotNull Set<ClassName> targetModulesClassNames, @NotNull Set<AnnotationSpec> additionalModuleAnnotations) {
     ClassName className = ClassName.get(packageName, moduleClassName);
     TypeSpec.Builder moduleBuilder = TypeSpec.interfaceBuilder(className)
       .addModifiers(Modifier.PUBLIC);
 
     AnnotationSpec daggerModuleAnnotationForIncludingModules = Util.createDaggerModuleAnnotationForIncludingModules(targetModulesClassNames);
     moduleBuilder.addAnnotation(daggerModuleAnnotationForIncludingModules);
+
+    for (AnnotationSpec annotationSpec : additionalModuleAnnotations) {
+      moduleBuilder.addAnnotation(annotationSpec);
+    }
+
     return moduleBuilder.build();
   }
 

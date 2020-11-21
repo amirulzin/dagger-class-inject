@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/JCenter-0.3.0-brightgreen)
+![Version](https://img.shields.io/badge/JCenter-0.3.1-brightgreen)
 ![License](https://img.shields.io/badge/License-Apache%202.0-blue)
 
 # Dagger Class Inject 
@@ -18,7 +18,6 @@ public interface SomeModule {
 }
 ````
 
-
 However, if you've been doing constructor injection as a good DI citizen, you probably start hating yourself
 when the need arise when you want to inject these across your project. Normally, having a few of them is fine. 
 However, once it began to balloon up as per your project complexity, you'll probably start looking for 
@@ -26,12 +25,6 @@ a solution to eliminate the tedium. Hence, this library is born.
 
 ### Usage
 
-This library automatically generate valid Dagger `Class`  providers for Java classes annotated with `@ClassInject`.
-These providers are then written into Dagger modules aptly named as `GeneratedClassProvidersModule`,
-which are all graphed into the "root" module, `ClassProvidersModule`.
-
-Root modules are created in the package where `@ClassInjectOrigin` was annotated.
- 
 Gradle:
 ````groovy
 repositories {
@@ -39,14 +32,14 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.redconfig:class-inject-api:0.3.0'
-    annotationProcessor 'com.redconfig:class-inject-processor:0.3.0'
+    implementation 'com.redconfig:class-inject-api:0.3.1'
+    annotationProcessor 'com.redconfig:class-inject-processor:0.3.1' //or kapt for Kotlin
     
     //You also need Dagger 2.26 at least
 }
 ````
  
- Declaration site:
+Declaration site:
 ````java
 package com.awesomepackage.deep.nested;
 
@@ -59,7 +52,8 @@ package com.awesomepackage;
 @ClassInjectOrigin
 public class SomeApp { ... }
 ````
- After generation:
+
+After building your project:
 ````java
 package com.awesomepackage;
 
@@ -69,7 +63,7 @@ package com.awesomepackage;
 public interface SomeAppComponent { ... }
 ````
  
- Injection site:
+Finally, on your injection sites:
 ````java
 package com.awesomepackage.deep.nested;
      
@@ -85,6 +79,12 @@ public class SomeGenericTool {
 }
 ````
 
+This library automatically generate valid Dagger `Class`  providers for Java classes annotated with `@ClassInject`.
+These providers are then written into Dagger modules aptly named as `GeneratedClassProvidersModule`,
+which are all graphed into the "root" module, `ClassProvidersModule`.
+
+Root modules are created in the package where `@ClassInjectOrigin` was annotated.
+ 
 ### Advanced Configuration
 
 By default, the processor works in `modular` mode which produces `GeneratedClassProviderModule` in the
@@ -109,11 +109,25 @@ compileJava {
 
 ### Hilt Support
 
-As of `0.3.0`, [Dagger Hilt](https://dagger.dev/hilt/) is supported via compiler arguments:
+As of `0.3.1`, [Dagger Hilt](https://dagger.dev/hilt/) is supported via compiler arguments:
 
 ````groovy
-compileJava {
-    options.compilerArgs += '-Acom.redconfig.classinject.module_annotations=hilt'
+//Apply Hilt plugin as per Hilt docs. Then:
+
+android {
+    ...
+    defaultConfig {
+        applicationId ...
+        minSdkVersion ...
+        targetSdkVersion ...
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ['com.redconfig.classinject.module_annotations':"hilt"]
+                arguments += ['com.redconfig.classinject.mode':"monolith"] //optional
+            }
+        }
+    }
 }
 ````
 
@@ -124,11 +138,17 @@ public class MyApplication extends Application {
    ...
 }
 ````
-
+````java
+@ClassInject
+public class SomeClass {
+   ...
+}
+````
+It is much simpler as Hilt has taken most of the module wiring on its own.
 
 The generated modules are installed in [SingletonComponent](https://dagger.dev/hilt/components).
 Hilt itself is not included in this library, hence you need to declare them separately.
- 
+
 ### Known Issues
 
 The library was made with Dagger `2.29.1`. It is however possible to encounter a compilation error on versions below `2.26` 

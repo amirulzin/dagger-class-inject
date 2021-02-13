@@ -1,4 +1,4 @@
-![Version](https://img.shields.io/badge/JCenter-0.3.1-brightgreen)
+![Version](https://img.shields.io/maven-central/v/com.redconfig/class-inject-processor?color=brightgreen&label=MavenCentral)
 ![License](https://img.shields.io/badge/License-Apache%202.0-blue)
 
 # Dagger Class Inject 
@@ -28,7 +28,7 @@ a solution to eliminate the tedium. Hence, this library is born.
 Gradle:
 ````groovy
 repositories {
-   jcenter()
+   mavenCentral()
 }
 
 dependencies {
@@ -53,7 +53,8 @@ package com.awesomepackage;
 public class SomeApp { ... }
 ````
 
-After building your project:
+After building your project once, depend upon the generated `ClassProvidersModule` in your main
+component:
 ````java
 package com.awesomepackage;
 
@@ -62,8 +63,8 @@ package com.awesomepackage;
 })
 public interface SomeAppComponent { ... }
 ````
- 
-Finally, on your injection sites:
+
+Finally, in your injection sites:
 ````java
 package com.awesomepackage.deep.nested;
      
@@ -99,8 +100,8 @@ You can enable `monolith` mode by passing the argument below to the compiler arg
 ````
 com.redconfig.classinject.mode=monolith
 ````
- 
-e.g. for Gradle :
+
+e.g. for Java projects with Gradle:
 ````groovy
 compileJava {
     options.compilerArgs += '-Acom.redconfig.classinject.mode=monolith'

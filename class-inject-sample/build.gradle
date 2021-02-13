@@ -6,7 +6,6 @@ sourceCompatibility = 1.8
 
 repositories {
   mavenCentral()
-  jcenter()
 }
 
 // Optional. Only if you want to use monolith mode.

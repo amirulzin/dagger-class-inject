@@ -1,15 +1,19 @@
 plugins {
   id 'java-library'
   id 'maven-publish'
+  id 'signing'
 }
 
 group libraryGroupId
 version libraryGroupVersion
 
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 dependencies {
   testImplementation group: 'junit', name: 'junit', version: '4.12'
 }
 
-apply from: "../publications.gradle"
+if (isPublishingEnabled) {
+  apply from: publicationGradle
+}

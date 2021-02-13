@@ -11,4 +11,8 @@ allprojects {
 ext {
   libraryGroupId = 'com.redconfig'
   libraryGroupVersion = '0.3.1'
+
+  optionalPublishingDir = rootProject.file(".publishing")
+  isPublishingEnabled = optionalPublishingDir.exists()
+  publicationGradle = new File(optionalPublishingDir, "publications.gradle")
 }
